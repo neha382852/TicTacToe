@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Model;
 using TicTacToe.DatabaseLayer;
+using TicTacToe.Aspects;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,15 +25,24 @@ namespace TicTacToe.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            SQLRepository obj = new SQLRepository();
+            string token = obj.RetrieveFromDatabase(id);
+            return token;
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]User userobject)
+        [Log]
+        [ExceptionHandler]
+        public string Post([FromBody]User userobject)
         {
             SQLRepository obj = new SQLRepository();
-            obj.InsertIntoDatabase(userobject);
+           string response = obj.InsertIntoDatabase(userobject);
+            if(response == null)
+            {
+                throw new Exception("User with same name already exists.");
+            }
+            return response;
         }
 
         // PUT api/values/5

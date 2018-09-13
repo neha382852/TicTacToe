@@ -12,7 +12,6 @@ namespace TicTacToe.DatabaseLayer
         {
             SqlConnection connection = new SqlConnection();
             connection.ConnectionString = "Data Source=TAVDESK045;Initial Catalog=TicTacToe;User ID=sa;Password=test123!@#";
-            connection.Open();
             return connection;
         }
         

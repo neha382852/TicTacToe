@@ -13,6 +13,7 @@ namespace TicTacToe
         {
             SQLConnectionEstablisher obj = new SQLConnectionEstablisher();
             SqlConnection connection = obj.createConnection();
+            connection.Open();
             string query = "SELECT * from UserDetails where AccessToken= '" +token+"'";
             SqlCommand cmd = new SqlCommand(query, connection);
             SqlDataReader reader = cmd.ExecuteReader();

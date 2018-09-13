@@ -9,7 +9,7 @@ namespace TicTacToe.DatabaseLayer
 {
     interface IRepository
     {
-    
-        void InsertIntoDatabase(User obj);
+        string RetrieveFromDatabase(int id);
+        string InsertIntoDatabase(User obj);
     }
 }
