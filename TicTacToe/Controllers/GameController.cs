@@ -11,6 +11,9 @@ using TicTacToe.Aspects;
 namespace TicTacToe.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
+    [Log]
+    [ExceptionHandler]
     public class GameController : Controller
     {
         //valid box-ids are:- 1,2,3,4,5,6,7,8,9
@@ -47,11 +50,11 @@ namespace TicTacToe.Controllers
             else
             {
                 if (countmoves == 9)
-                    return "DRAW";
+                    return "Draw";
 
             }
            
-            return "Continue";
+            return "In Progress";
 
         }
         // GET api/values
@@ -59,7 +62,7 @@ namespace TicTacToe.Controllers
         public string Get()
         {
             string winner = checkWinner();
-            if (countmoves == 9 && winner == "Continue")
+            if (countmoves == 9 && winner == "Progress")
                 return "Draw";
             return winner;
          
@@ -68,17 +71,22 @@ namespace TicTacToe.Controllers
 
         // POST api/values
         [HttpPost]
-       // [Authorize]
-       // [Log]
-     //   [ExceptionHandler]
+     
         public string Post([FromHeader]string username,[FromHeader]string Boxid)
         {
            int BoxId = int.Parse(Boxid);
+           
+               
+                     if (UsernameList.Count < 2)
+                     {
+                         UsernameList.Add(username);
+                     }
+
             if (!UsernameList.Contains(username))
             {
-                UsernameList.Add(username);
-
+                throw new Exception("This is a 2-player game");
             }
+            
             if (flag == 0)
             {
                 if (UsernameList.Count == 1)
@@ -104,10 +112,11 @@ namespace TicTacToe.Controllers
                 {
                     if (player1 == username)
                     {
-                        IsPlayer1 = false;
-                        IsPlayer2 = true;
+                       
                         if (!blockedList.Contains(BoxId))
                         {
+                            IsPlayer1 = false;
+                            IsPlayer2 = true;
                             blockedList.Add(BoxId);
                             player1list.Add(BoxId);
                             countmoves++;
@@ -128,10 +137,11 @@ namespace TicTacToe.Controllers
                 {
                     if (player2 == username)
                     {
-                        IsPlayer2 = false;
-                        IsPlayer1 = true;
+                      
                         if (!blockedList.Contains(BoxId))
                         {
+                            IsPlayer2 = false;
+                            IsPlayer1 = true;
                             blockedList.Add(BoxId);
                             player2list.Add(BoxId);
                             countmoves++;
@@ -150,9 +160,18 @@ namespace TicTacToe.Controllers
              
 
             }
-            if(UsernameList.Count > 2)
+           if(result== "Player1 is the winner" || result== "Player2 is the winner"|| result=="Draw")
             {
-                throw new Exception("This is a 2-player game.");
+                result = result + " .Game is over now.You can start new game.";
+                blockedList.Clear();
+                player2list.Clear();
+                player1list.Clear();
+                UsernameList.Clear();
+                IsPlayer1 = true;
+                IsPlayer2 = true;
+                countmoves = 0;
+                flag = 0;
+                
             }
             return result;
         }

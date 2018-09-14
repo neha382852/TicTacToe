@@ -12,6 +12,8 @@ using TicTacToe.Aspects;
 namespace TicTacToe.Controllers
 {
     [Route("api/[controller]")]
+    [Log]
+    [ExceptionHandler]
     public class IdentityController : Controller
     {
         // GET: api/values
@@ -32,8 +34,7 @@ namespace TicTacToe.Controllers
 
         // POST api/values
         [HttpPost]
-        [Log]
-        [ExceptionHandler]
+     
         public string Post([FromBody]User userobject)
         {
             SQLRepository obj = new SQLRepository();
